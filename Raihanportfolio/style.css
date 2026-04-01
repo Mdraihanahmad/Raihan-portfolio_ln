@@ -29,6 +29,14 @@ body {
   background: var(--second-text-color);
   color: var(--text-color);
 }
+
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible {
+  outline: 3px solid var(--third-text-color);
+  outline-offset: 3px;
+}
 html::-webkit-scrollbar {
   width: 0.8rem;
 }
@@ -1468,7 +1476,7 @@ form textarea {
   /* bottom: 0; */
   width: 100%;
   background: var(--second-text-color);
-  z-index: -100;
+  z-index: 90;
   color: #fff;
   font-family: "Text_bold", "__handwritingText", cursive;
   display: flex;

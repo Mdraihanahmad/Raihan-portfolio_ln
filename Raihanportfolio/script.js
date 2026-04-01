@@ -1,30 +1,30 @@
 // Typing animation
-var typed = new Typed(".text", {
-  strings: ["Web Developer", "Python Developer", "Front End Developer", "Data Analyst"],
-  typeSpeed: 100,
-  backSpeed: 100,
-  backDelay: 1000,
-  loop: true
-});
+if (window.Typed && document.querySelector(".text")) {
+  new Typed(".text", {
+    strings: ["Web Developer", "Python Developer", "Front End Developer", "Data Analyst"],
+    typeSpeed: 100,
+    backSpeed: 100,
+    backDelay: 1000,
+    loop: true,
+  });
+}
 
 //moving cursor animation
 const cursor = document.getElementById("cursor");
+const prefersReducedMotion = window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches;
 
-const images = [
-  "logo/ninja2.webp",
-  "logo/ninja1.webp",
-  "logo/ninja3.webp",
-  "logo/ninja1.webp",
-];
+const images = ["logo/ninja2.png", "logo/ninja1.webp", "logo/ninja3.webp", "logo/ninja1.webp"];
 
 let currentImage = 0;
 
-// Change image every 5 seconds
-setInterval(() => {
-  currentImage = (currentImage + 1) % images.length;
-  cursor.style.backgroundImage = `url('${images[currentImage]}')`;
-  cursor.style.transition = "transform 0.3s ease, background-image 0.5s ease";
-}, 2500); // every 3 seconds
+if (cursor && !prefersReducedMotion) {
+  // Change image periodically
+  setInterval(() => {
+    currentImage = (currentImage + 1) % images.length;
+    cursor.style.backgroundImage = `url('${images[currentImage]}')`;
+    cursor.style.transition = "transform 0.3s ease, background-image 0.5s ease";
+  }, 2500);
+}
 
 // Smooth follow effect
 let mouseX = 0,
@@ -38,6 +38,8 @@ document.addEventListener("mousemove", (e) => {
 });
 
 function animate() {
+  if (!cursor || prefersReducedMotion) return;
+
   cursorX += (mouseX - cursorX) * 0.1;
   cursorY += (mouseY - cursorY) * 0.1;
 
@@ -79,11 +81,27 @@ window.onscroll = () => {
 menuIcon.onclick = () => {
   menuIcon.classList.toggle("bx-x");
   navbar.classList.toggle("active");
+
+  const isOpen = navbar.classList.contains("active");
+  menuIcon.setAttribute("aria-expanded", String(isOpen));
+  menuIcon.setAttribute("aria-label", isOpen ? "Close menu" : "Open menu");
 };
+
+navlinks.forEach((link) => {
+  link.addEventListener("click", () => {
+    if (navbar.classList.contains("active")) {
+      navbar.classList.remove("active");
+      menuIcon.setAttribute("aria-expanded", "false");
+      menuIcon.setAttribute("aria-label", "Open menu");
+    }
+  });
+});
 
 document.addEventListener("click", (e) => {
   if (!menuIcon.contains(e.target) && !navbar.contains(e.target)) {
     navbar.classList.remove("active");
+    menuIcon.setAttribute("aria-expanded", "false");
+    menuIcon.setAttribute("aria-label", "Open menu");
   }
 });
 
@@ -176,10 +194,13 @@ window.addEventListener("scroll", () => {
   const scrollTop = window.scrollY;
   const windowHeight = window.innerHeight;
   const fullHeight = document.body.scrollHeight;
+  const footer = document.querySelector(".footer");
+
+  if (!footer) return;
 
   if (scrollTop + windowHeight >= fullHeight - 10) {
-    document.querySelector(".footer").classList.add("show");
+    footer.classList.add("show");
   } else {
-    document.querySelector(".footer").classList.remove("show");
+    footer.classList.remove("show");
   }
 });
